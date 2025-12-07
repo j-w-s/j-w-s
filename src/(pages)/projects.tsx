@@ -17,7 +17,7 @@ const projects: Project[] = [
             'Historical data scraping and cleaning',
             'Team generation based on meta trends'
         ],
-        image: '/projects/pokemon_vgc.png'
+        image: 'projects/pokemon_vgc.png'
     },
     {
         id: 'tshader',
@@ -28,7 +28,7 @@ const projects: Project[] = [
             'Multi-pass rendering (bloom, etc)',
             'Custom HLSL shader support'
         ],
-        image: '/projects/terraria_shader.png'
+        image: 'projects/terraria_shader.png'
     },
     {
         id: 'animal-adopt',
@@ -39,7 +39,7 @@ const projects: Project[] = [
             'Architected front-end and back-end',
             'Angular guidance and reusable components'
         ],
-        image: '/projects/animal_adopt.png'
+        image: 'projects/animal_adopt.png'
     },
     {
         id: 'love2d-engine',
@@ -51,7 +51,7 @@ const projects: Project[] = [
             'Optimized for LuaJIT (SoA, FFI)',
             'Matrix/Vector math libraries'
         ],
-        image: '/projects/love2d_engine.png'
+        image: 'projects/love2d_engine.png'
     },
     {
         id: 'lunet',
@@ -63,7 +63,7 @@ const projects: Project[] = [
             'Sandboxed client and server',
             'Immediate-mode GUI with LOVE2D'
         ],
-        image: '/projects/lunet.png'
+        image: 'projects/lunet.png'
     },
     {
         id: 'mica',
@@ -75,7 +75,7 @@ const projects: Project[] = [
             'Closures and zero-cost abstractions',
             'Lazy iterators with monomorphization'
         ],
-        image: '/projects/mica.png'
+        image: 'projects/mica.png'
     }
 ];
 
@@ -88,7 +88,7 @@ const Projects = () => {
                 {projects.map(project => (
                     <div key={project.id} className="glass-panel card card-hover project-card">
                         <div className="project-image-wrapper">
-                            <img src={project.image} alt={project.title} className="project-image" />
+                            <img src={`${import.meta.env.BASE_URL}${project.image}`} alt={project.title} className="project-image" />
                             <div className="project-overlay txt-primary">
                                 <ul>
                                     {project.details.map((detail, i) => (

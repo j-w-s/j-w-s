@@ -13,7 +13,7 @@ const Home = () => {
     return (
         <div className="home-container">
             <div className="home-profile">
-                <img src="/me.png" alt="Will Shepherd" className="profile-image" />
+                <img src={`${import.meta.env.BASE_URL}me.png`} alt="Will Shepherd" className="profile-image" />
                 <div className="profile-info">
                     <h1 className="txt-primary text-shadow">Will Shepherd</h1>
                     <p className="txt-secondary text-shadow">Software Engineer</p>
