@@ -5,7 +5,7 @@ const Home = () => {
 
     const cards = [
         { path: '/about', title: 'About', description: 'Experience & skills', icon: '👤' },
-        { path: '/projects', title: 'Projects', description: 'My work', icon: '🚀' },
+        { path: '/projects', title: 'Projects', description: 'My private work', icon: '🚀' },
         { path: '/tools', title: 'Tools', description: 'Utilities & apps', icon: '🛠️' },
         { path: '/contact', title: 'Contact', description: 'Get in touch', icon: '✉️' },
     ];
@@ -38,5 +38,4 @@ const Home = () => {
         </div>
     );
 };
-
 export default Home;
