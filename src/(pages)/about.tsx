@@ -1,7 +1,7 @@
 const About = () => {
     const experience = [
         {
-            title: 'Software Engineer (Lead Capacity)',
+            title: 'Full-Stack Software Engineer',
             company: 'United Tile Company',
             location: 'Shreveport, LA',
             period: 'Jun 2025 – Nov 2025',
