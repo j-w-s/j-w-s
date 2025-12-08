@@ -7,10 +7,10 @@ const About = () => {
     ];
 
     const skills = {
-        languages: ['TypeScript', 'JavaScript', 'Python', 'Lua', 'Rust', 'C#', 'HLSL'],
-        frameworks: ['React', 'Angular', 'LOVE2D', 'tModLoader', 'Vite'],
-        tools: ['Git', 'Node.js', 'FFI', 'LuaJIT'],
-        concepts: ['ECS', 'Compiler Design', 'Shader Programming', 'Networking', 'Data Mining']
+        languages: ['C', 'C#', 'Python', 'TypeScript', 'HTML', 'CSS', 'Lua', 'Rust', 'SQL'],
+        frameworks: ['.NET 9', 'React', 'Next.js', 'FastAPI', 'Flask', 'Angular', 'Node.js'],
+        tools: ['Docker', 'Azure', 'Git', 'PostgreSQL', 'MySQL', 'SQL Server'],
+        concepts: ['Reverse Engineering', 'Microservices', 'Distributed Systems', 'Full-Stack Architecture', 'Networking', 'Data Mining']
     };
 
     return (
