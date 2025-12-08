@@ -1143,7 +1143,6 @@ input:checked+.slider:before {
         font-size: 1.5rem;
     }
 }
-
 ::-webkit-scrollbar {
     width: 0;
 }

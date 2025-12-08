@@ -17,5 +17,4 @@ const Card = ({ children, className = '', onClick, hover = true }: CardProps) =>
         </div>
     );
 };
-
 export default Card;

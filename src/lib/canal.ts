@@ -177,7 +177,6 @@ export class CanalQuery<T> {
         const result = await this.all();
         return result.data;
     }
-
     poll(
         intervalMs: number,
         callback: (data: Page<T>) => void,

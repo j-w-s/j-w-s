@@ -3,7 +3,6 @@ import About from '../(pages)/about';
 import Contact from '../(pages)/contact';
 import Projects from '../(pages)/projects';
 import Tools from '../(pages)/tools';
-
 //@ts-ignore
 export const routes: Record<string, () => JSX.Element> = {
     '/': Home,
