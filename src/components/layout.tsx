@@ -38,8 +38,6 @@ const Layout = ({ children }: LayoutProps) => {
                 gl_Position = vec4(a_position, 0.0, 1.0);
             }
         `;
-        // adopted: https://www.shadertoy.com/view/tXy3DK
-        // this guy is awesome. i could not get this right
         const fragmentShaderSource = `#version 300 es
             precision highp float;
             
@@ -373,6 +371,20 @@ const Layout = ({ children }: LayoutProps) => {
                     c += get_dust(uv, vec2(2000.), waveGlow) * vec3(0.8, 1.0, 0.85) * 0.35;
                 #endif
                 
+                vec2 rippleCenter = vec2(u_resolution.x + 50.0, -50.0);
+                float rippleThickness = 2.0;
+                float sizeMultiplier = min(u_resolution.x, u_resolution.y) / 1000.0;
+                float distToCenter = length(gl_FragCoord.xy - rippleCenter);
+                float totalRipple = 0.0;
+                float baseRadius = 300.0 * sizeMultiplier;
+                for (int i = 0; i < 5; i++) {
+                    float radius = baseRadius + float(i) * 100.0 * sizeMultiplier;
+                    float circle = smoothstep(radius - rippleThickness, radius, distToCenter) * 
+                                   (1.0 - smoothstep(radius, radius + rippleThickness, distToCenter));
+                    totalRipple += circle * (0.6 - float(i) * 0.05);
+                }
+                c += vec3(1.0) * 0.12 * totalRipple;
+                
                 fragColor = vec4(c, 1.0);
             }
         `;
@@ -458,22 +470,6 @@ const Layout = ({ children }: LayoutProps) => {
             const program = programRef.current;
             const currentTime = (Date.now() - startTimeRef.current) / 1000;
 
-            const style = getComputedStyle(document.documentElement);
-            const extractRGB = (gradientStr: string) => {
-                const match = gradientStr.match(/#([0-9a-f]{6})/i);
-                if (match) {
-                    const hex = match[1];
-                    return [
-                        parseInt(hex.substr(0, 2), 16) / 255,
-                        parseInt(hex.substr(2, 2), 16) / 255,
-                        parseInt(hex.substr(4, 2), 16) / 255
-                    ];
-                }
-                return [0, 0, 0];
-            };
-
-            const gradientStr = style.getPropertyValue('--screen-bg');
-
             let colors: number[][] = [];
             if (isDarkMode) {
                 colors = [
@@ -537,9 +533,6 @@ const Layout = ({ children }: LayoutProps) => {
             <Navbar />
 
             <div className="theme-toggle-container">
-                {/*
-                    <span className="theme-label bar-background">{isDarkMode ? 'DARK' : 'LIGHT'}</span>
-                */}
                 <label className="toggle-switch">
                     <input
                         type="checkbox"
