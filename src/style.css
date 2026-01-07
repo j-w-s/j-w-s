@@ -192,6 +192,21 @@ body {
     font-size: 10px;
 }
 
+.bar-background{
+    background: var(--bottom-bar-bg);
+    height: auto;
+    width: auto;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0.1%;
+    padding: 0 8px;
+    border-top: 1px solid var(--bottom-bar-border-top);
+    transition: background 0.5s, border-color 0.5s;
+    box-sizing: border-box;
+}
+
 /* Bottom Bar Gradient */
 .bottom-bar {
     background: var(--bottom-bar-bg);
