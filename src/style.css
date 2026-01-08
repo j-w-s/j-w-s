@@ -710,7 +710,7 @@ input:checked+.slider:before {
 }
 
 /* Card Component */
-.card {
+.card2 {
     transition: all 0.3s ease;
 }
 
@@ -768,7 +768,7 @@ input:checked+.slider:before {
     opacity: 0.8;
 }
 
-.home-cards {
+.cards {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -777,7 +777,7 @@ input:checked+.slider:before {
     max-width: 300px;
 }
 
-.home-card {
+.card {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -788,21 +788,21 @@ input:checked+.slider:before {
     width: 100%;
 }
 
-.home-card-icon {
+.card-icon {
     font-size: 1.25rem;
     transition: transform 0.3s ease;
 }
 
-.home-card:hover .home-card-icon {
+.card:hover .card-icon {
     transform: scale(1.15);
 }
 
-.home-card-content h3 {
+.card-content h3 {
     font-size: 0.9rem;
     margin-bottom: 0.125rem;
 }
 
-.home-card-content p {
+.card-content p {
     font-size: 0.7rem;
     opacity: 0.7;
 }
@@ -1122,7 +1122,7 @@ input:checked+.slider:before {
         height: 250px;
     }
 
-    .home-cards {
+    .cards {
         max-width: 100%;
         width: 100%;
     }
@@ -1158,6 +1158,16 @@ input:checked+.slider:before {
         font-size: 1.5rem;
     }
 }
+
+.card-icon {
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
+    width: 1.5rem;
+    height: 1.5rem;
+    object-fit: contain;
+    opacity: 0.8;
+}
+
 ::-webkit-scrollbar {
     width: 0;
 }

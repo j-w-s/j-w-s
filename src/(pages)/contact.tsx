@@ -34,17 +34,15 @@ const Contact = () => {
                     </p>
                     <div className="contact-links">
                         <div className="contact-link txt-secondary">
-                            <span>📧</span>
                             <span>jwshepherd172002@gmail.com</span>
                         </div>
                         <div className="contact-link txt-secondary">
-                            <span>💻</span>
                             <span>github.com/j-w-s</span>
                         </div>
                     </div>
                 </div>
 
-                <form className="glass-panel card contact-form" onSubmit={handleSubmit}>
+                <form className="glass-panel card2 contact-form" onSubmit={handleSubmit}>
                     <h3 className="form-title txt-primary text-shadow">Email</h3>
                     <div className="form-group">
                         <label className="txt-primary" htmlFor="name">Name</label>

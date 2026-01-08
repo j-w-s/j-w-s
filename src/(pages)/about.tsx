@@ -46,7 +46,7 @@ const About = () => {
         <div className="page-container">
             <h1 className="page-title txt-primary text-shadow">About Me</h1>
 
-            <div className="glass-panel card card-hover section-card">
+            <div className="glass-panel card2 card-hover section-card">
                 <h2 className="section-title txt-primary text-shadow">Experience</h2>
                 {experience.map((exp, i) => (
                     <div key={i} className="experience-item">
@@ -62,7 +62,7 @@ const About = () => {
                 ))}
             </div>
 
-            <div className="glass-panel card card-hover section-card">
+            <div className="glass-panel card2 card-hover section-card">
                 <h2 className="section-title txt-primary text-shadow">Education</h2>
                 <div className="education-item">
                     <h3 className="txt-primary">Louisiana Tech University</h3>
@@ -73,7 +73,7 @@ const About = () => {
                 </div>
             </div>
 
-            <div className="glass-panel card card-hover section-card">
+            <div className="glass-panel card2 card-hover section-card">
                 <h2 className="section-title txt-primary text-shadow">Skills</h2>
                 <div className="skills-grid">
                     <div className="skill-category">
