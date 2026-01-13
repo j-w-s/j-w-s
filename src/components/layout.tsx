@@ -12,6 +12,7 @@ const Layout = ({ children }: LayoutProps) => {
     const programRef = useRef<WebGLProgram | null>(null);
     const animationRef = useRef<number>(0);
     const startTimeRef = useRef<number>(Date.now());
+    const uniformLocationsRef = useRef<{[key: string]: WebGLUniformLocation | null}>({});
 
     useEffect(() => {
         if (isDarkMode) {
@@ -25,7 +26,14 @@ const Layout = ({ children }: LayoutProps) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const gl = canvas.getContext('webgl2');
+        const gl = canvas.getContext('webgl2', {
+            alpha: false,
+            antialias: false,
+            depth: false,
+            stencil: false,
+            premultipliedAlpha: false,
+            preserveDrawingBuffer: false
+        });
         if (!gl) {
             console.error('WebGL2 not supported');
             return;
@@ -39,7 +47,7 @@ const Layout = ({ children }: LayoutProps) => {
             }
         `;
         const fragmentShaderSource = `#version 300 es
-            precision highp float;
+            precision mediump float;
             
             uniform vec2 u_resolution;
             uniform float u_time;
@@ -47,12 +55,10 @@ const Layout = ({ children }: LayoutProps) => {
             uniform vec3 u_color2;
             uniform vec3 u_color3;
             uniform vec3 u_color4;
-            uniform sampler2D u_noise;
             
             out vec4 fragColor;
             
             #define THRESHOLD .99
-            #define DUST
             #define MIN_DIST .13
             #define MAX_DIST 40.
             #define MAX_DRAWS 40
@@ -74,35 +80,33 @@ const Layout = ({ children }: LayoutProps) => {
             
             float get_stars_rough(vec2 p) {
                 float s = smoothstep(THRESHOLD, 1., hash12(p));
-                if (s >= THRESHOLD) 
-                    s = pow((s - THRESHOLD) / (1. - THRESHOLD), 10.);
-                return s;
+                return s >= THRESHOLD ? pow((s - THRESHOLD) * 10., 10.) : s;
             }
             
             float get_stars(vec2 p, float a, float t) {
-                vec2 pg = floor(p), pc = p - pg, k = vec2(0, 1);
-                pc *= pc * pc * (3. - 2. * pc);
+                vec2 pg = floor(p), pc = fract(p);
+                pc = pc * pc * (3. - pc - pc);
                 
                 float s = mix(
-                    mix(get_stars_rough(pg + k.xx), get_stars_rough(pg + k.yx), pc.x),
-                    mix(get_stars_rough(pg + k.xy), get_stars_rough(pg + k.yy), pc.x),
+                    mix(get_stars_rough(pg), get_stars_rough(pg + vec2(1,0)), pc.x),
+                    mix(get_stars_rough(pg + vec2(0,1)), get_stars_rough(pg + vec2(1)), pc.x),
                     pc.y
                 );
                 return smoothstep(a, a + t, s) * pow(value2d(p * .1 + u_time) * .5 + .5, 8.3);
             }
             
             float value2d(vec2 p) {
-                vec2 pg = floor(p), pc = p - pg, k = vec2(0, 1);
-                pc *= pc * pc * (3. - 2. * pc);
+                vec2 pg = floor(p), pc = fract(p);
+                pc = pc * pc * (3. - pc - pc);
                 return mix(
-                    mix(hash12(pg + k.xx), hash12(pg + k.yx), pc.x),
-                    mix(hash12(pg + k.xy), hash12(pg + k.yy), pc.x),
+                    mix(hash12(pg), hash12(pg + vec2(1,0)), pc.x),
+                    mix(hash12(pg + vec2(0,1)), hash12(pg + vec2(1)), pc.x),
                     pc.y
                 );
             }
             
             float get_dust(vec2 p, vec2 size, float f) {
-                vec2 ar = vec2(u_resolution.x / u_resolution.y, 1);
+                vec2 ar = vec2(u_resolution.x * (1.0 / u_resolution.y), 1);
                 vec2 pp = p * size * ar;
                 return 
                     pow(.64 + .46 * cos(p.x * 6.28), 1.7) * f *
@@ -125,11 +129,11 @@ const Layout = ({ children }: LayoutProps) => {
                 p.xz -= 0.5;
                 vec3 q = vec3(p.z, h * p.y - 0.5 * p.x, h * p.x + 0.5 * p.y);
                 float s = max(-q.x, 0.0);
-                float t = clamp((q.y - 0.5 * p.z) / (m2 + 0.25), 0.0, 1.0);
+                float t = clamp((q.y - 0.5 * p.z) * (1.0 / (m2 + 0.25)), 0.0, 1.0);
                 float a = m2 * (q.x + s) * (q.x + s) + q.y * q.y;
                 float b = m2 * (q.x + 0.5 * t) * (q.x + 0.5 * t) + (q.y - m2 * t) * (q.y - m2 * t);
                 float d2 = min(q.y, -q.x * m2 - q.y * 0.5) > 0.0 ? 0.0 : min(a, b);
-                return sqrt((d2 + q.z * q.z) / m2) * sign(max(q.z, -p.y));
+                return sqrt((d2 + q.z * q.z) * (1.0 / m2)) * sign(max(q.z, -p.y));
             }
             
             float sdX(vec3 p, float s) {
@@ -174,7 +178,7 @@ const Layout = ({ children }: LayoutProps) => {
                     float size = 0.3 + h4 * 0.4;
                     
                     float xOffset = sin(u_time * 0.4 + seed) * 2.0;
-                    float yOffset = cos(u_time * 0.5 + seed) * 1.0;
+                    float yOffset = cos(u_time * 0.5 + seed);
                     
                     float xPos = u_time * speed + seed * 8.0;
                     xPos = mod(xPos, 30.0) - 15.0;
@@ -187,7 +191,7 @@ const Layout = ({ children }: LayoutProps) => {
                     localP.xz *= rot2D(rot * 0.7);
                     
                     float shapeDist;
-                    int currentType = i % 4;
+                    int currentType = i - (i / 4) * 4;
                     
                     if (currentType == 0) {
                         shapeDist = sdSphere(localP, size);
@@ -210,12 +214,11 @@ const Layout = ({ children }: LayoutProps) => {
             
             vec3 norm_shapes(vec3 p, out float shapeType) {
                 const float eps = 0.003;
-                vec2 e = vec2(eps, 0);
                 float st;
                 return normalize(vec3(
-                    sdf_shapes(p + e.xyy, shapeType) - sdf_shapes(p - e.xyy, st),
-                    sdf_shapes(p + e.yxy, shapeType) - sdf_shapes(p - e.yxy, st),
-                    sdf_shapes(p + e.yyx, shapeType) - sdf_shapes(p - e.yyx, st)
+                    sdf_shapes(p + vec3(eps,0,0), shapeType) - sdf_shapes(p - vec3(eps,0,0), st),
+                    sdf_shapes(p + vec3(0,eps,0), shapeType) - sdf_shapes(p - vec3(0,eps,0), st),
+                    sdf_shapes(p + vec3(0,0,eps), shapeType) - sdf_shapes(p - vec3(0,0,eps), st)
                 ));
             }
             
@@ -245,7 +248,7 @@ const Layout = ({ children }: LayoutProps) => {
                         if (dr > MAX_DRAWS) break;
                         dr++;
                         
-                        float f = smoothstep(0.09, 0.11, (p.z * .9) / 100.);
+                        float f = smoothstep(0.09, 0.11, (p.z * .9) * 0.01);
                         if (!hit) {
                             a = .01;
                             hit = true;
@@ -256,7 +259,7 @@ const Layout = ({ children }: LayoutProps) => {
                     }
                 }
                 
-                g /= 3.;
+                g *= 0.333;
                 return vec3(a, max(1. - g, 0.), t);
             }
             
@@ -272,7 +275,8 @@ const Layout = ({ children }: LayoutProps) => {
                         float tempType;
                         vec3 n = norm_shapes(p, tempType);
                         
-                        if (length(n) > 0.5 && length(n) < 1.5) {
+                        float nLen = length(n);
+                        if (nLen > 0.5 && nLen < 1.5) {
                             float nDotD = dot(n, -d);
                             float fresnel = pow(1.0 - max(nDotD, 0.0), 2.5);
                             float rim = pow(1.0 - abs(nDotD), 3.0);
@@ -291,7 +295,7 @@ const Layout = ({ children }: LayoutProps) => {
             void main() {
                 vec2 uv = gl_FragCoord.xy / u_resolution.xy;
                 vec3 o = vec3(0);
-                vec3 d = normalize(vec3((gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y, 1));
+                vec3 d = normalize(vec3((gl_FragCoord.xy - u_resolution * 0.5) * vec2(1.0 / u_resolution.y), 1));
                 
                 vec3 waveData = raymarch_wave(o, d, 1.2);
                 float shapeType;
@@ -304,16 +308,16 @@ const Layout = ({ children }: LayoutProps) => {
                 float shapeFresnel = shapeData.y;
                 float shapeRim = shapeData.z;
                 
-                vec2 gradDir = normalize(vec2(1.0, 1.0));
+                vec2 gradDir = vec2(0.707106781);
                 float gradPos = dot(uv, gradDir);
                 
                 vec3 c;
                 if (gradPos < 0.35) {
-                    c = mix(u_color1, u_color2, gradPos / 0.35);
+                    c = mix(u_color1, u_color2, gradPos * 2.857142857);
                 } else if (gradPos < 0.70) {
-                    c = mix(u_color2, u_color3, (gradPos - 0.35) / 0.35);
+                    c = mix(u_color2, u_color3, (gradPos - 0.35) * 2.857142857);
                 } else {
-                    c = mix(u_color3, u_color4, (gradPos - 0.70) / 0.30);
+                    c = mix(u_color3, u_color4, (gradPos - 0.70) * 3.333333333);
                 }
                 
                 vec3 colorTint;
@@ -367,13 +371,11 @@ const Layout = ({ children }: LayoutProps) => {
                     c = mix(c, vec3(0.95, 1.0, 0.98), waveAlpha);
                 #endif
                 
-                #ifdef DUST
-                    c += get_dust(uv, vec2(2000.), waveGlow) * vec3(0.8, 1.0, 0.85) * 0.35;
-                #endif
+                c += get_dust(uv, vec2(2000.), waveGlow) * vec3(0.8, 1.0, 0.85) * 0.35;
                 
                 vec2 rippleCenter = vec2(u_resolution.x + 50.0, -50.0);
                 float rippleThickness = 2.0;
-                float sizeMultiplier = min(u_resolution.x, u_resolution.y) / 1000.0;
+                float sizeMultiplier = min(u_resolution.x, u_resolution.y) * 0.001;
                 float distToCenter = length(gl_FragCoord.xy - rippleCenter);
                 float totalRipple = 0.0;
                 float baseRadius = 300.0 * sizeMultiplier;
@@ -383,7 +385,7 @@ const Layout = ({ children }: LayoutProps) => {
                                    (1.0 - smoothstep(radius, radius + rippleThickness, distToCenter));
                     totalRipple += circle * (0.6 - float(i) * 0.05);
                 }
-                c += vec3(1.0) * 0.12 * totalRipple;
+                c += totalRipple * 0.12;
                 
                 fragColor = vec4(c, 1.0);
             }
@@ -422,6 +424,16 @@ const Layout = ({ children }: LayoutProps) => {
         }
 
         programRef.current = program;
+        gl.useProgram(program);
+
+        uniformLocationsRef.current = {
+            resolution: gl.getUniformLocation(program, 'u_resolution'),
+            time: gl.getUniformLocation(program, 'u_time'),
+            color1: gl.getUniformLocation(program, 'u_color1'),
+            color2: gl.getUniformLocation(program, 'u_color2'),
+            color3: gl.getUniformLocation(program, 'u_color3'),
+            color4: gl.getUniformLocation(program, 'u_color4')
+        };
 
         const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -436,26 +448,13 @@ const Layout = ({ children }: LayoutProps) => {
         gl.enableVertexAttribArray(positionLocation);
         gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-        gl.useProgram(program);
-
-        const texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-
-        const noiseImage = new Image();
-        noiseImage.onload = () => {
-            gl.bindTexture(gl.TEXTURE_2D, texture);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, noiseImage);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        };
-        noiseImage.src = '/textures/noise.png';
-
         const resizeCanvas = () => {
             if (!canvas) return;
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            const dpr = Math.min(window.devicePixelRatio, 2);
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            canvas.style.width = window.innerWidth + 'px';
+            canvas.style.height = window.innerHeight + 'px';
             gl.viewport(0, 0, canvas.width, canvas.height);
         };
         resizeCanvas();
@@ -463,50 +462,51 @@ const Layout = ({ children }: LayoutProps) => {
 
         startTimeRef.current = Date.now();
 
-        const render = () => {
+        let lastTime = 0;
+        const render = (currentTime: number) => {
             if (!programRef.current || !glRef.current) return;
 
-            const gl = glRef.current;
-            const program = programRef.current;
-            const currentTime = (Date.now() - startTimeRef.current) / 1000;
+            const deltaTime = currentTime - lastTime;
+            if (deltaTime < 16.67) {
+                animationRef.current = requestAnimationFrame(render);
+                return;
+            }
+            lastTime = currentTime;
 
-            let colors: number[][] = [];
+            const gl = glRef.current;
+            const currentTimeSeconds = (Date.now() - startTimeRef.current) * 0.001;
+
+            let colors: Float32Array;
             if (isDarkMode) {
-                colors = [
-                    [0.059, 0.090, 0.165],
-                    [0.118, 0.227, 0.541],
-                    [0.024, 0.714, 0.831],
-                    [0.024, 0.714, 0.831]
-                ];
+                colors = new Float32Array([
+                    0.059, 0.090, 0.165,
+                    0.118, 0.227, 0.541,
+                    0.024, 0.714, 0.831,
+                    0.024, 0.714, 0.831
+                ]);
             } else {
-                colors = [
-                    [0.176, 0.353, 0.102],
-                    [0.290, 0.561, 0.149],
-                    [0.427, 0.784, 0.224],
-                    [0.659, 0.910, 0.416]
-                ];
+                colors = new Float32Array([
+                    0.176, 0.353, 0.102,
+                    0.290, 0.561, 0.149,
+                    0.427, 0.784, 0.224,
+                    0.659, 0.910, 0.416
+                ]);
             }
 
-            const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
-            const timeLocation = gl.getUniformLocation(program, 'u_time');
-            const color1Location = gl.getUniformLocation(program, 'u_color1');
-            const color2Location = gl.getUniformLocation(program, 'u_color2');
-            const color3Location = gl.getUniformLocation(program, 'u_color3');
-            const color4Location = gl.getUniformLocation(program, 'u_color4');
-
-            gl.uniform2f(resolutionLocation, canvas!.width, canvas!.height);
-            gl.uniform1f(timeLocation, currentTime);
-            gl.uniform3fv(color1Location, colors[0]);
-            gl.uniform3fv(color2Location, colors[1]);
-            gl.uniform3fv(color3Location, colors[2]);
-            gl.uniform3fv(color4Location, colors[3]);
+            const locs = uniformLocationsRef.current;
+            gl.uniform2f(locs.resolution, canvas!.width, canvas!.height);
+            gl.uniform1f(locs.time, currentTimeSeconds);
+            gl.uniform3fv(locs.color1, colors.subarray(0, 3));
+            gl.uniform3fv(locs.color2, colors.subarray(3, 6));
+            gl.uniform3fv(locs.color3, colors.subarray(6, 9));
+            gl.uniform3fv(locs.color4, colors.subarray(9, 12));
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
             animationRef.current = requestAnimationFrame(render);
         };
 
-        render();
+        animationRef.current = requestAnimationFrame(render);
 
         return () => {
             window.removeEventListener('resize', resizeCanvas);

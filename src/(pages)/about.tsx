@@ -6,11 +6,13 @@ const About = () => {
             location: 'Shreveport, LA',
             period: 'Jun 2025 – Nov 2025',
             highlights: [
-                'Architected and led full-stack development of several core business platforms internal tools',
-                'Reverse-engineered legacy DLLs to build custom CLI automation tools for MoraWare and Sage',
-                'Architected secure payment gateway using NMI and CollectJs with custom multi-fund allocation logic',
-                'Engineered end-to-end OpenAI agent pipeline for document classification and automated workflows',
-                'Migrated legacy Flask analytics to high-performance FastAPI microservices'
+                'Architected and led full-stack development of 5 core business platforms and 3 internal tool suites, enabling field workers to access real-time data and streamlining operational workflows',
+                'Consolidated dependencies and refactored a fragmented codebase into a unified monorepo with automated theming and shared libraries, supporting multiple frameworks (Next.js, Vite) while eliminating deployment issues',
+                'Reverse-engineered legacy DLLs to build custom CLI/Web automation tools for MoraWare and Sage, unlocking previously inaccessible API capabilities for automated business workflows',
+                'Built a secure payment gateway using NMI and CollectJs with multi-fund allocation logic, automating payment splits across cost centers',
+                'Engineered an end-to-end OpenAI agent pipeline that ingests documents, performs classification, and triggers downstream MoraWare workflows, significantly reducing manual data entry',
+                'Migrated legacy Flask analytics to high-performance FastAPI microservices for real-time data dashboards',
+                'Managed DevOps infrastructure while providing technical support to end-users, using feedback to prioritize bug fixes and feature development'
             ]
         },
         {
@@ -19,8 +21,8 @@ const About = () => {
             location: 'Ruston, LA',
             period: 'Mar 2024 – May 2024',
             highlights: [
-                'Developed and optimized prompt engineering strategies for GPT-4 models in business applications',
-                'Applied data mining techniques to scrape, clean, and prepare large-scale training datasets'
+                'Developed and optimized prompt engineering strategies to guide GPT-4 models for contextually accurate responses in academic applications',
+                'Applied data mining techniques to scrape, clean, and prepare large-scale training datasets from diverse business web sources'
             ]
         },
         {
@@ -29,17 +31,17 @@ const About = () => {
             location: 'Bossier City, LA',
             period: 'Jun 2023 – Aug 2023',
             highlights: [
-                'Led front-end and back-end development for Air Force Global Strike Command\'s workflow scheduler using Angular and C#',
-                'Developed automated scripts for synthetic data generation to accelerate database stress testing'
+                'Led front-end and back-end development for the Air Force Global Strike Command\'s (AFGSC) workflow scheduler using Angular and C#',
+                'Developed automated scripts for synthetic data generation to accelerate database stress testing and team development velocity'
             ]
         }
     ];
 
     const skills = {
-        languages: ['C', 'C#', 'Python', 'TypeScript', 'HTML', 'CSS', 'Lua', 'Rust', 'SQL'],
-        frameworks: ['.NET 9', 'React', 'Next.js', 'FastAPI', 'Flask', 'Angular', 'Node.js', 'Entity Framework Core'],
+        languages: ['C', 'C#', 'Python', 'TypeScript', 'Javascript', 'HTML', 'CSS', 'SQL'],
+        frameworks: ['.NET 8/9', 'React', 'Next.js', 'FastAPI', 'Flask', 'Angular', 'Node.js', 'Entity Framework Core'],
         tools: ['Docker', 'Azure', 'Git', 'PostgreSQL', 'MySQL', 'SQL Server'],
-        concepts: ['Reverse Engineering', 'Microservices', 'Distributed Systems', 'Full-Stack Architecture', 'Networking', 'Data Mining']
+        concepts: ['Reverse Engineering', 'Microservices', 'Distributed Systems', 'Full-Stack Development', 'System Architecture', 'Networking', 'Data Mining', 'Machine Learning', 'Artificial Intelligence']
     };
 
     return (
@@ -66,8 +68,8 @@ const About = () => {
                 <h2 className="section-title txt-primary text-shadow">Education</h2>
                 <div className="education-item">
                     <h3 className="txt-primary">Louisiana Tech University</h3>
-                    <p className="txt-secondary">Bachelor of Science with Honors</p>
-                    <p className="txt-secondary">Computer Science, Concentration in Cybersecurity</p>
+                    <p className="txt-secondary">Bachelor of Science with Honors in Computer Science</p>
+                    <p className="txt-secondary">Concentration in Cybersecurity</p>
                     <p className="txt-secondary education-details">GPA: 3.9/4.0 | Presidential Scholarship Recipient</p>
                     <p className="txt-secondary education-date">September 2020 - May 2024</p>
                 </div>
@@ -113,4 +115,5 @@ const About = () => {
         </div>
     );
 };
+
 export default About;
