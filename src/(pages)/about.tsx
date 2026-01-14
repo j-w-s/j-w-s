@@ -4,7 +4,7 @@ const About = () => {
             title: 'Full-Stack Software Engineer',
             company: 'United Tile Company',
             location: 'Shreveport, LA',
-            period: 'Jun 2025 – Nov 2025',
+            period: 'Jun 2025 – Oct 2025',
             highlights: [
                 'Architected and led full-stack development of 5 core business platforms and 3 internal tool suites, enabling field workers to access real-time data and streamlining operational workflows',
                 'Consolidated dependencies and refactored a fragmented codebase into a unified monorepo with automated theming and shared libraries, supporting multiple frameworks (Next.js, Vite) while eliminating deployment issues',
@@ -12,7 +12,8 @@ const About = () => {
                 'Built a secure payment gateway using NMI and CollectJs with multi-fund allocation logic, automating payment splits across cost centers',
                 'Engineered an end-to-end OpenAI agent pipeline that ingests documents, performs classification, and triggers downstream MoraWare workflows, significantly reducing manual data entry',
                 'Migrated legacy Flask analytics to high-performance FastAPI microservices for real-time data dashboards',
-                'Managed DevOps infrastructure while providing technical support to end-users, using feedback to prioritize bug fixes and feature development'
+                'Contributed to documentation and DevOps infrastructure while providing technical support to 20+ end-users across multiple departments and apps, using feedback to prioritize bug fixes and feature development',
+                'Drove detailed UI/UX prototyping and architectural planning via Figma'
             ]
         },
         {
@@ -40,7 +41,7 @@ const About = () => {
     const skills = {
         languages: ['C', 'C#', 'Python', 'TypeScript', 'Javascript', 'HTML', 'CSS', 'SQL'],
         frameworks: ['.NET 8/9', 'React', 'Next.js', 'FastAPI', 'Flask', 'Angular', 'Node.js', 'Entity Framework Core'],
-        tools: ['Docker', 'Azure', 'Git', 'PostgreSQL', 'MySQL', 'SQL Server'],
+        tools: ['Docker', 'Azure', 'Git', 'PostgreSQL', 'MySQL', 'SQL Server', 'Figma'],
         concepts: ['Reverse Engineering', 'Microservices', 'Distributed Systems', 'Full-Stack Development', 'System Architecture', 'Networking', 'Data Mining', 'Machine Learning', 'Artificial Intelligence']
     };
 
